@@ -1,7 +1,6 @@
 import random
 import string
 import os
-#TODO: Girilen harfleri ekrana yazdır.
 
 letters = list(string.ascii_uppercase)
 letters.append("Ç")
@@ -14,7 +13,7 @@ def retrieve_word(language):
     letter = letters[0]
     
     try:
-        path = "{lng}-database/{ltr}.txt".format(lng=language, ltr=letter)
+        path = "{realpath}/databases/{lng}-database/{ltr}.txt".format(realpath=os.path.dirname(os.path.realpath(__file__)), lng=language, ltr=letter)
         with open(path, "r", encoding="utf-8") as file:
             return random.choice(file.readlines()).strip("\n")
     except:
@@ -39,7 +38,6 @@ def mask(word):
 
 
 def update_masked_word(word, masked_word, user_input):
-    #Sorulan kelimede [ŞU HARF VAR MI] sorusunun cevabını verecek olan fonksiyon.
     index = -1
     for char in word:
         index += 1
@@ -65,7 +63,6 @@ def game_control(language):
     word = retrieve_word(language).upper()
     masked_word = mask(word)
     life = 8
-    print(word)
 
     while True:
         if life > 0:
@@ -76,7 +73,11 @@ def game_control(language):
                 if is_true(word, user_input):
                     print_ui(win=True)
                     return game_control(language)
-            elif len(user_input) == 1: #eğer haf tahmini ise
+                else:
+                    life -= 1
+                    print("Sorry... your have lost 1 life point.")
+                    continue
+            elif len(user_input) == 1:
                 if is_letter_there(word, user_input):
                     masked_word = update_masked_word(word, masked_word, user_input)
                     continue
@@ -195,10 +196,8 @@ def print_ui(word=None, masked_word=None, life=None, win=False, lost=False, game
         
 
 def menu():
-    language = input("Please type in the language you want to play with.")
+    language = input("Please type in the language you want to play with.\nCurrently available languages are: Turkish\n\n").lower()
     game_control(language)
-
-    print(mask(language))
 
 
 menu()
